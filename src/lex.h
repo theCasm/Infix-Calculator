@@ -9,6 +9,9 @@ enum TokenType {
 	MINUS,
 	TIMES,
 	DIVIDE,
+	POW,
+	SIN,
+	COS,
 	TOKEN_EOF,
 	LINE_END
 };
@@ -21,6 +24,9 @@ static const char *TokenStrings[] = {
 	"-",
 	"*",
 	"/",
+	"^",
+	"sin",
+	"cos",
 	"EOF",
 	"\\n"
 };

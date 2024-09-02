@@ -6,10 +6,11 @@
 static struct Token *next = NULL;
 struct Token *searchForNext(void);
 struct Token *lexRestNumber(char);
+struct Token *lexRestPrefix(char);
 
 int isInfix(enum TokenType type)
 {
-	return PLUS <= type && type <= DIVIDE;
+	return PLUS <= type && type <= POW;
 }
 
 struct Token *peek()
@@ -27,6 +28,7 @@ void acceptIt()
 
 void accept(enum TokenType type)
 {
+	peek();
 	if (next->type != type) {
 		fprintf(stderr, "Expected `%s` but got `%s`\n", TokenStrings[type], next->spelling);
 	}
@@ -85,9 +87,13 @@ struct Token *searchForNext()
 		ans->type = DIVIDE;
 		ans->spelling = "/";
 		return ans;
+	case '^':
+		ans->type = POW;
+		ans->spelling = "^";
+		return ans;
+	default:
+		return lexRestPrefix(nextChar);
 	}
-	fprintf(stderr, "Unrecognized token: %c\n", nextChar);
-	exit(1);
 }
 
 struct Token *lexRestNumber(char first)
@@ -113,4 +119,37 @@ struct Token *lexRestNumber(char first)
 		ungetc(nextChar, stdin);
 	}
 	return ans;
+}
+
+struct Token *lexRestPrefix(char first)
+{
+	struct Token *ans = malloc(sizeof(struct Token));
+	int next;
+	if (first == 's') {
+		if ((next = getchar()) == 'i') {
+			if ((next = getchar()) == 'n') {
+				ans->type = SIN;
+				ans->spelling = "sin";
+				return ans;
+			}
+			fprintf(stderr, "Unrecognized token: si%c\n", next);
+			exit(1);
+		}
+		fprintf(stderr, "Unrecognized token: s%c\n", next);
+		exit(1);
+	} else if (first == 'c') {
+		if ((next = getchar()) == 'o') {
+			if ((next = getchar()) == 's') {
+				ans->type = COS;
+				ans->spelling = "cos";
+				return ans;
+			}
+			fprintf(stderr, "Unrecognized token: co%c\n", next);
+			exit(1);
+		}
+		fprintf(stderr, "Unrecognized token: c%c\n", next);
+		exit(1);
+	}
+	fprintf(stderr, "Unrecognized token: %c\n", first);
+	exit(1);
 }
