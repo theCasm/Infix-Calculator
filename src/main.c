@@ -7,7 +7,7 @@ int main(void)
 	printf("> ");
 	while (peek()->type != TOKEN_EOF) {
 		fflush(stdout);
-		printf("%lf\n", parse());
+		printf("%.8g\n", parse());
 		printf("> ");
 	}
 }
